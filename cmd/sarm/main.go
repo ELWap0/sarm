@@ -1,8 +1,10 @@
-package sarm
+package main
 
 import (
 	"flag"
-	"sarm/internal/trash"
+	"os"
+	"fmt"
+	"github.com/ELWap0/sarm/internal/trash"
 )
 
 func main() {
@@ -10,6 +12,11 @@ func main() {
 	var path string
 	flag.StringVar(&path, "file", "", "file to perform action against")
 	flag.StringVar(&action, "action", "", "command to perform")
+	flag.Usage = func() {
+		fmt.Printf("Usage: %s -action <action> -file <path>\n", os.Args[0])
+		flag.PrintDefaults()
+		fmt.Printf("actions:\n\tclean\n\tdelete\n\tfind\n\tlist\n\trestore\n")
+	}
 	flag.Parse()
 	tl := trash.NewTrashList()
 	trash.Read()
@@ -26,6 +33,7 @@ func main() {
 		tl.List()
 	case "clean":
 		tl.Clean(path)
-	case "save":
+	default:
+		flag.Usage()	
 	}
 }

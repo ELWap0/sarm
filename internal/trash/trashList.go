@@ -8,7 +8,7 @@ import (
 	"errors"
 	"encoding/json"
 	fuzzyfinder"github.com/lithammer/fuzzysearch/fuzzy"
-	"sarm/internal/common"
+	"github.com/ELWap0/sarm/internal/common"
 	
 )
 const lockfile = "/tmp/sarm/lockfile.json"

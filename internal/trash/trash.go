@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"time"
 	"errors"
-	"sarm/internal/archive"
-	"sarm/internal/common"
+	"github.com/ELWap0/sarm/internal/archive"
+	"github.com/ELWap0/sarm/internal/common"
 )
 
 type Trash struct {
