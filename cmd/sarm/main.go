@@ -15,27 +15,28 @@ func main() {
 	flag.Usage = func() {
 		fmt.Printf("Usage: %s -action <action> -file <path>\n", os.Args[0])
 		flag.PrintDefaults()
-		fmt.Printf("actions:\n\tclean\n\tdelete\n\tfind\n\tlist\n\trestore\n")
+		fmt.Printf("actions:\n\tdelete - deletes the file\n\trestore - restores deleted file\n\tfind - dumpter dive for a file\n\tlist - list all deleted files\n\tclean - purges all deleted files\n")
 	}
 	flag.Parse()
-	tl, err  := trash.NewTrashMan()
+	tm, err  := trash.NewTrashMan()
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	switch action {
 	case "delete":
-		tl.Remove(path)
-		tl.Save()
+		tm.Remove(path)
+		tm.List()
+		tm.Save()
 	case "restore":
-		tl.Restore(path)	
-		tl.Save()
+		tm.Restore(path)	
+		tm.Save()
 	case "find":
-		tl.FuzzyFind(path)
+		tm.FuzzyFind(path)
 	case "list":
-		tl.List()
+		tm.List()
 	case "clean":
-		tl.Clean(path)
+		tm.Clean(path)
 	default:
 		flag.Usage()	
 	}

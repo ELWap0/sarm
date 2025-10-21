@@ -10,7 +10,7 @@ import (
 	"github.com/ELWap0/sarm/internal/common"
 )
 
-const TrashRoute = "tm/sarm/"
+const TrashRoute = "/tmp/sarm/"
 
 type Trash struct {
 	Origin string `json:"origin"`

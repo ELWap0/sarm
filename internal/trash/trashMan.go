@@ -92,8 +92,15 @@ func (tm TrashMan) FuzzyFind(in string) (string, error){
 
 
 func (tl TrashMan) Save() (err error){
-	var fd *os.File 
+	fd, err  := os.Open(lockfile)
+	if err != nil {
+		return err
+	}
 	data, err  := json.Marshal(tl.trashCans)
+	if err != nil {
+		return err
+	}
 	fd.Write(data)
+	fd.Close()
 	return nil
 }
