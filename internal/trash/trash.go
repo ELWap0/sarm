@@ -4,9 +4,13 @@ import (
 	"path/filepath"
 	"time"
 	"errors"
+	"fmt"
+	"os"
 	"github.com/ELWap0/sarm/internal/archive"
 	"github.com/ELWap0/sarm/internal/common"
 )
+
+const TrashRoute = "tm/sarm/"
 
 type Trash struct {
 	Origin string `json:"origin"`
@@ -14,20 +18,29 @@ type Trash struct {
 	DeletedAt string  `json:"time"`
 }
 
+func (t Trash) getPath() string{
+	fileName := fmt.Sprintf("%s-%s",t.DeletedAt,t.Hash)
+	return filepath.Join(TrashRoute, fileName)
+}
+
 
 func (t *Trash) Store() error {
 	t.DeletedAt = time.Now().Format(time.RFC3339) 
-	if err := archive.Store(t.Origin, t.DeletedAt, t.Hash); err != nil{
+	if err := archive.Store(t.Origin, t.getPath()); err != nil{
 		return err
 	}
 	return nil
 }
 
-func (t Trash) restore() error {
-	if err 	:= archive.Restore(t.Origin, t.DeletedAt, t.Hash); err != nil {
+func (t Trash) Restore() error {
+	if err 	:= archive.Restore(t.getPath(),t.Origin); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (t Trash) Delete() error {
+	return os.Remove(t.getPath())
 }
 
 func newTrash(path string) (Trash,error) {

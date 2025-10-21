@@ -2,37 +2,40 @@ package archive
 
 import (
 	"os"
-	"fmt"
 	"io"
 	"compress/gzip"
 )
 
-func Store(path, deletionTime, hash string) error {
-	src, err := os.Open(path)
+func Store(src, dst string) error {
+	fdSrc, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	
-	dst, err := os.Create(fmt.Sprintf("%s-%s",deletionTime,hash))
-	gzw := gzip.NewWriter(dst)
-	io.Copy(gzw,src)
+	fdDst, err := os.Create(dst)
+	gzw := gzip.NewWriter(fdDst)
+	io.Copy(gzw, fdSrc)
+	fdSrc.Close()
+	fdDst.Close()
+	os.Remove(src)
 	return nil
 }
 
-func Restore(path, deletionTime, hash string) error {
-	dst, err := os.Open(path)
+func Restore(src, dst string) error {
+	fdDst, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	cPath := fmt.Sprintf("%s-%s",deletionTime,hash)
-	src, err := os.Open(cPath)
+	fdSrc, err := os.Open(dst)
 	if err != nil {
 		return err
 	}
-	gzr, err  := gzip.NewReader(src)
+	gzr, err := gzip.NewReader(fdSrc)
 	if err != nil {
 		return err
 	}
-	io.Copy(dst,gzr)
+	io.Copy(fdDst,gzr)
+	fdSrc.Close()
+	fdDst.Close()
+	os.Remove(src)
 	return nil
 }

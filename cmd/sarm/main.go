@@ -18,8 +18,11 @@ func main() {
 		fmt.Printf("actions:\n\tclean\n\tdelete\n\tfind\n\tlist\n\trestore\n")
 	}
 	flag.Parse()
-	tl := trash.NewTrashList()
-	trash.Read()
+	tl, err  := trash.NewTrashMan()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 	switch action {
 	case "delete":
 		tl.Remove(path)
