@@ -92,7 +92,7 @@ func (tm TrashMan) FuzzyFind(in string) (string, error){
 
 
 func (tl TrashMan) Save() (err error){
-	fd, err  := os.Open(lockfile)
+	fd, err  := os.OpenFile(lockfile,os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,10 @@ func (tl TrashMan) Save() (err error){
 	if err != nil {
 		return err
 	}
-	fd.Write(data)
+	fmt.Println(string(data))
+	if _, err =fd.Write(data); err != nil {
+		return err
+	}
 	fd.Close()
 	return nil
 }

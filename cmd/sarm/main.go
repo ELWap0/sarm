@@ -27,7 +27,9 @@ func main() {
 	case "delete":
 		tm.Remove(path)
 		tm.List()
-		tm.Save()
+ 		if err := tm.Save(); err != nil {
+			fmt.Println(err.Error())
+		}
 	case "restore":
 		tm.Restore(path)	
 		tm.Save()
