@@ -47,6 +47,7 @@ func (tm *TrashMan) Remove(path string) error {
 		return err
 	}
 	tm.trashCans[path] = t
+	tm.save()
 	return nil
 }
 
@@ -56,13 +57,14 @@ func (tl TrashMan) List() {
 	}
 }
 
-func (tl *TrashMan) Restore(path string) error {
-	t, ok := tl.trashCans[path]
+func (tm *TrashMan) Restore(path string) error {
+	t, ok := tm.trashCans[path]
 	if !ok {
 		return errors.New("sarm does not have a record of " + path)
 	}
 	t.Restore()
-	delete(tl.trashCans, path)
+	delete(tm.trashCans, path)
+	tm.save()
 	return nil
 }
 
@@ -72,6 +74,8 @@ func (tm *TrashMan) Clean(path string) error {
 		return errors.New("sarm does not have a record of " + path)
 	}
 	t.Delete()
+	delete(tm.trashCans, path)
+	tm.save()
 	return nil
 }
 
@@ -91,7 +95,7 @@ func (tm TrashMan) FuzzyFind(in string) (string, error){
 }
 
 
-func (tl TrashMan) Save() (err error){
+func (tl TrashMan) save() (err error){
 	fd, err  := os.OpenFile(lockfile,os.O_WRONLY, 0644)
 	if err != nil {
 		return err
