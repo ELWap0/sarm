@@ -48,7 +48,6 @@ func newTrash(path string) (Trash,error) {
 	if err != nil {
 		return Trash{}, nil
 	}
-
 	if !common.FileExits(origin) {
 		return Trash{},errors.New("file does not exist") 
 	}

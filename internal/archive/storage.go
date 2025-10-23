@@ -11,31 +11,45 @@ func Store(src, dst string) error {
 	if err != nil {
 		return err
 	}
+
 	fdDst, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer fdDst.Close()
+
 	gzw := gzip.NewWriter(fdDst)
-	io.Copy(gzw, fdSrc)
+	defer gzw.Close()
+
+	if _, err = io.Copy(gzw, fdSrc); err != nil {
+		return err
+	}
 	fdSrc.Close()
-	fdDst.Close()
 	os.Remove(src)
 	return nil
 }
 
 func Restore(src, dst string) error {
-	fdDst, err := os.Open(src)
+	fdSrc, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	fdSrc, err := os.Open(dst)
-	if err != nil {
-		return err
-	}
+
 	gzr, err := gzip.NewReader(fdSrc)
 	if err != nil {
 		return err
 	}
+
+	fdDst, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer fdDst.Close()
+
 	io.Copy(fdDst,gzr)
+	gzr.Close()
 	fdSrc.Close()
-	fdDst.Close()
 	os.Remove(src)
+
 	return nil
 }

@@ -46,7 +46,7 @@ func (tm *TrashMan) Remove(path string) error {
 	if err = t.Store(); err != nil {
 		return err
 	}
-	tm.trashCans[path] = t
+	tm.trashCans[t.Origin] = t
 	tm.save()
 	return nil
 }
@@ -62,7 +62,9 @@ func (tm *TrashMan) Restore(path string) error {
 	if !ok {
 		return errors.New("sarm does not have a record of " + path)
 	}
-	t.Restore()
+	if err := t.Restore(); err != nil {
+		return err
+	}
 	delete(tm.trashCans, path)
 	tm.save()
 	return nil
@@ -80,7 +82,7 @@ func (tm *TrashMan) Clean(path string) error {
 }
 
 func (tm *TrashMan) Purge() error {//wipes cache
-	os.Remove(lockfile)
+	os.RemoveAll(TrashRoute)
 	return nil
 }
 
@@ -101,10 +103,10 @@ func (tl TrashMan) save() (err error){
 		return err
 	}
 	data, err  := json.Marshal(tl.trashCans)
+	fmt.Println(string(data))
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(data))
 	if _, err =fd.Write(data); err != nil {
 		return err
 	}

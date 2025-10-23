@@ -7,7 +7,7 @@ import (
 )
 
 func main(){
-	var del, restore, find, clean string
+	var del, restore, find, clean, found string
 	var purge, list bool
 	flag.StringVar(&del, "delete", "", "delete following file")
 	flag.StringVar(&restore, "restore", "", "restore following file")
@@ -21,20 +21,25 @@ func main(){
 		fmt.Println(err.Error())
 		return
 	}
+
 	switch {
 		case del != "":
-			tm.Remove(del)
+			err  = tm.Remove(del)
 		case restore != "":
-			tm.Restore(restore)
+			err = tm.Restore(restore)
 		case find != "":
-			tm.FuzzyFind(find)
+			found, err = tm.FuzzyFind(find)
+			fmt.Println(found)
 		case clean != "":
-			tm.Clean(find)
+			err = tm.Clean(find)
 		case list:
 			tm.List()
 		case purge:
-			tm.Purge()
+			err = tm.Purge()
 		default:
 			flag.PrintDefaults()
+	}
+	if err != nil {
+		fmt.Printf("Error: %v",err.Error())
 	}
 }
